@@ -112,6 +112,8 @@ function collision() {
                     ball.dy = -ball.dy;
                     b.status = 0;
                     score++;
+                    // ball.dx += 0.5;
+                    // ball.dy += 0.5;
                     if (score == brick.rowCount * brick.columnCount) {
                         gameWin = true;
                     }
@@ -122,6 +124,8 @@ function collision() {
 
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
+document.addEventListener("click", refreshHandler);
+document.addEventListener("keypress", refreshHandler, false);
 document.addEventListener("mousemove", mouseMoveHandler, false);
 
 function keyDownHandler(e) {
@@ -154,6 +158,10 @@ function mouseMoveHandler(e) {
     }
 }
 
+function refreshHandler(e) {
+     if (gameWin || gameOver) document.location.reload();
+ }
+
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawBricks();
@@ -164,13 +172,13 @@ function draw() {
     collision();
     if (gameOver) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        drawString("Thua rồi", canvas.width / 2, canvas.height / 3);
+        drawString("GAME OVER", canvas.width / 2, canvas.height / 3);
         drawString("Score: " + score, canvas.width / 2, canvas.height / 2);
         clearInterval(id);
     }
     if (gameWin) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        drawString("Thắng game", canvas.width / 2, canvas.height / 3);
+        drawString("GAME WIN", canvas.width / 2, canvas.height / 3);
         drawString("Score: " + score, canvas.width / 2, canvas.height / 2);
         clearInterval(id);
     }
@@ -218,7 +226,7 @@ function draw() {
 }
 
 function getRandomColor() {
-    color = '#' + Math.floor(Math.random() * 2222).toString(16);
+    color = '#' + Math.floor(Math.random() * 16777215).toString(16);
 }
 
 function activeRandomColor() {
@@ -259,14 +267,14 @@ function createGame() {
             canvas.height = 640;
             brick.rowCount = 6;
             brick.columnCount = 10;
-            lifes = 2;
+            lifes = 5;
             break;
         case 'Expert':
             canvas.width = 1440;
             canvas.height = 960;
             brick.rowCount = 9;
             brick.columnCount = 15;
-            lifes = 1;
+            lifes = 6;
             break;
         case 'Custom':
             canvas.width = document.getElementById('canvasWidth').value;
