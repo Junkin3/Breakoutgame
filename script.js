@@ -112,8 +112,6 @@ function collision() {
                     ball.dy = -ball.dy;
                     b.status = 0;
                     score++;
-                    // ball.dx += 0.5;
-                    // ball.dy += 0.5;
                     if (score == brick.rowCount * brick.columnCount) {
                         gameWin = true;
                     }
@@ -159,7 +157,7 @@ function mouseMoveHandler(e) {
 }
 
 function refreshHandler(e) {
-     if (gameWin || gameOver) document.location.reload();
+     if (gameWin || gameOver) createGame();
  }
 
 function draw() {
