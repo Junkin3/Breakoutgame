@@ -122,8 +122,6 @@ function collision() {
 
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
-document.addEventListener("click", refreshHandler);
-document.addEventListener("keypress", refreshHandler, false);
 document.addEventListener("mousemove", mouseMoveHandler, false);
 
 function keyDownHandler(e) {
@@ -156,9 +154,6 @@ function mouseMoveHandler(e) {
     }
 }
 
-function refreshHandler(e) {
-     if (gameWin || gameOver) createGame();
- }
 
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
