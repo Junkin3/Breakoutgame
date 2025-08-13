@@ -1,81 +1,456 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
-    <title>Breakout</title>
-</head>
-<body>
-    <canvas id="myCanvas" width="480" height="320"></canvas>
-    <div class="container-sm mt-4">
-        <form action="#" method="get">
-            <div class="form-group">
-                <label for="level" class="font-weight-bold">Level:</label>
-                <select id="level" class="form-control form-control-sm" onchange="activeCustom();">
-                    <option value="Beginner">A</option>
-                    <option value="Intermediate">Trung bình</option>
-                    <option value="Expert">Khó</option>
-                    <option value="Custom">Custom</option>
-                </select>
-            </div>
-            <div class="form-group class-hidden temp">
-                <label for="canvasWidth" class="font-weight-bold">Chiều rộng Canvas:</label>
-                <input type="number" id="canvasWidth" class="form-control form-control-sm" min="480" max="1440"
-                    value="480">
-            </div>
-            <div class="form-group class-hidden temp">
-                <label for="canvasHeight" class="font-weight-bold">Chiều cao Canvas:</label>
-                <input type="number" id="canvasHeight" class="form-control form-control-sm" min="320" max="960"
-                    value="320">
-            </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/printThis/1.15.0/printThis.min.js"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+    <style>
+        body {
+            background-color: white;
+            /* Ensure the iframe has a white background */
+        }
 
-            <div class="form-group class-hidden temp">
-                <label for="brickRowCount" class="font-weight-bold">Số hàng gạch:</label>
-                <input type="number" id="brickRowCount" class="form-control form-control-sm" min="3" max="9" value="3">
-            </div>
-            <div class="form-group class-hidden temp">
-                <label for="brickColumnCount" class="font-weight-bold">Số cột gạch:</label>
-                <input type="number" id="brickColumnCount" class="form-control form-control-sm" min="5" max="15"
-                    value="5">
-            </div>
-            <div class="form-group class-hidden temp">
-                <label for="lifes" class="font-weight-bold">Số mạng:</label>
-                <input type="number" id="lifes" class="form-control form-control-sm" min="3" max="6" value="3">
-            </div>
-            <div class="form-group">
-                <button type="button" class="btn btn-success btn-sm" onclick="createGame();">Tạo trò chơi</button>
-                <button type="button" class="btn btn-danger btn-sm" onclick="activeRandomColor();">Chế độ
-                    RGB</button>
-            </div>
-        </form>
-    </div>
-    <div class="container-fluid padding">
-        <div class="row text-center padding">
-            <div class="col-12">
-                <strong>Contact us</strong>
-            </div>
-            <div class="col-12 social padding">
-                <a href="https://www.facebook.com"><i class="fa fa-facebook-square"></i></a>
-                <a href="https://twitter.com"><i class="fa fa-twitter"></i></a>
-                <a href="https://www.youtube.com"><i class="fa fa-youtube-play"></i></a>
-                <a href="https://mail.google.com"><i class="fa fa-google-plus-circle"></i></a>
-                <a href="https://www.instagram.com"><i class="fa fa-instagram"></i></a>
-            </div>
-        </div>
-    </div>
-    <br>
-    <br>
-    <footer>
-        <div class="col-12">
-            <h5>&copyCopyright 2022. All Rights Reserved.</h5>
-        </div>
-    </footer>
-    <script src="script.js"></script>
-</body>
-</html>
+        /* Reset default styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            line-height: 1.2;
+        }
+
+        .container {
+            width: 100%;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .logo {
+            /* flex: 1; */
+        }
+
+        .logo-image {
+            width: 100px;
+            height: auto;
+        }
+
+        .company-info {
+            flex: 2;
+            text-align: center;
+        }
+
+        .company-info h2 {
+            margin-bottom: 5px;
+        }
+
+        .company-info p {
+            font-size: 12px;
+        }
+
+        .qr-code {
+            /* flex: 1; */
+            text-align: right;
+        }
+
+        .qr-code-image {
+            width: 200px;
+            height: auto;
+        }
+
+        /* Main Content */
+        .content {
+            flex: 3;
+            display: inline-flex;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 3px;
+            text-align: left;
+            font-weight: bold;
+        }
+
+        td:first-child {
+            width: 30%;
+        }
+
+        /* Sidebar Image */
+        .sidebar {
+            flex: 1;
+            text-align: right;
+            width: 300px;
+            height: 250px;
+        }
+
+        .product-image {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .listComponent {
+            width: 100%;
+            border-collapse: collapse;
+            border: 1px solid #ddd;
+            margin-top: 10px;
+        }
+
+        .listComponent th,
+        .listComponent td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        .listComponent th {
+            background-color: #f2f2f2;
+        }
+
+        .listComponent tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .listComponent tr:hover {
+            background-color: #e9e9e9;
+        }
+
+        .listComponent td:first-child {
+            font-weight: bold;
+            width: 35px;
+            text-align: center;
+        }
+
+        .listComponent td:last-child {
+            text-align: center;
+            width: 50px;
+        }
+
+        #printButton {
+            float: right;
+            margin: 15px;
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .h1_td {
+            font-size: 36px;
+        }
+
+        .span-line {
+            padding-left: 40px;
+        }
+
+        .pr_4 {
+            padding-right: 40px;
+        }
+
+        .pl_4 {
+            padding-left: 40px;
+        }
+
+        .td_flex_center {
+            display: flex;
+            align-items: center;
+        }
+
+        /* Print-specific styles using @media print */
+        @media print {
+
+            /* Set page size for the entire print job */
+            @page {
+                size: landscape;
+                /* Or A4 landscape */
+                margin: 0;
+                /* Remove default browser margins if you handle margins within your div */
+                scale: 0.95;
+            }
+
+            /* Styles for the body when printing */
+            body {
+                margin: 0 auto;
+                padding: 0;
+                background-color: white;
+                /* No background color when printing */
+                display: block;
+                /* Override flex for printing */
+            }
+
+            /* Styles for the A4 div when printing */
+            .a4-page {
+                width: 210mm;
+                /* Ensure it matches A4 size */
+                min-height: 297mm;
+                margin: 0 auto;
+                /* No external margins */
+                border: none;
+                /* No border for print */
+                box-shadow: none;
+                /* No shadow for print */
+                padding: 10mm;
+                /* Keep internal padding as print margins */
+                /* If content overflows, it will naturally create new pages */
+            }
+
+            .a4-page.landscape {
+                width: 297mm;
+                min-height: 210mm;
+                margin: 0 auto;
+            }
+
+            /* Force page breaks for elements if desired */
+            .new-page {
+                page-break-before: always;
+            }
+
+            .h1_td {
+                font-size: 36px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!DOCTYPE html>
+    <html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Print Content</title>
+    </head>
+
+    <body>
+        <button id="printButton">
+            <img src="https://cdn-icons-png.flaticon.com/512/3616/3616288.png" alt="Print Icon"
+                style="width: 20px; height: 20px; vertical-align: middle;"> In
+            nội dung
+        </button>
+        <div id="dataToPrint"></div>
+    </body>
+
+    </html>
+    <script>
+        $(document).ready(function () {
+            $("#printButton").click(function () {
+                $(".container").printThis({
+                    importCSS: true,
+                    importStyle: true,
+                    removeInline: true,
+                    printDelay: 333,
+                    header: null,
+                    formValues: true
+                });
+            });
+            let paramFilter = {
+                "Project": "{{$nURLSearchParams.Project,id}}",
+                "productionOrder": "{{$nURLSearchParams.productionOrder,id}}",
+                "areaPackInstall": "{{$nURLSearchParams.areaPackInstall,id}}",
+                "weight": "{{$nURLSearchParams.weight}}",
+                "codePack": "{{$nURLSearchParams.codePack}}",
+                "statusPack": "{{$nURLSearchParams.statusPack}}",
+                "unitPackInst": "{{$nURLSearchParams.unitPackInst}}",
+                "checkHardware": "{{$nURLSearchParams.checkHardware}}",
+                "orderdirectionPack": "{{$nURLSearchParams.orderdirectionPack}}",
+                "fragile": "{{$nURLSearchParams.fragile}}",
+            };
+            // console.log(paramFilter);
+            let filter = {
+                "$and": [
+                    paramFilter.Project == "" ? null : { "Project": { "id": { "$eq": paramFilter.Project } } },
+                    paramFilter.productionOrder == "" ? null : { "productionOrder": { "id": { "$eq": paramFilter.productionOrder } } },
+                    paramFilter.areaPackInstall == "" ? null : { "areaPackInstall": { "id": { "$eq": paramFilter.areaPackInstall } } },
+                    paramFilter.weight == "" ? null : { "weight": { "$eq": paramFilter.weight } },
+                    paramFilter.codePack == "" ? null : { "codePack": { "$includes": paramFilter.codePack } },
+                    paramFilter.statusPack == "" ? null : { "statusPack": { "$eq": paramFilter.statusPack } },
+                    paramFilter.unitPackInst == "" ? null : { "unitPackInst": { "id": { "$eq": paramFilter.unitPackInst } } },
+                    paramFilter.checkHardware == "" ? null : { "checkHardware": { "$isTruly": eval(paramFilter.checkHardware) } },
+                    paramFilter.orderdirectionPack == "" ? null : { "orderdirectionPack": { "$eq": paramFilter.orderdirectionPack } },
+                    paramFilter.fragile == "" ? null : { "fragile": { "$eq": paramFilter.fragile } }
+                ]
+            };
+            // console.log(JSON.stringify(filter));
+
+            let config = {
+                method: 'get',
+                url: 'https://pfc.aacorporation.vn/api/packInfoLDTNC:get?filterByTk={{$nPopupRecord.id}}&sort%5B%5D=-updatedAt&appends%5B%5D=productionOrder&appends%5B%5D=productionOrder.ProjectSAP&appends%5B%5D=imgsPack&appends%5B%5D=installationGuide&appends%5B%5D=f_IDPhieuDelivery&appends%5B%5D=Project&appends%5B%5D=imgAvatar&appends%5B%5D=createdBy&appends%5B%5D=updatedBy&appends%5B%5D=listComponents&appends%5B%5D=unitPackInst&appends%5B%5D=listComponents.unit&appends%5B%5D=areaPackInstall&appends%5B%5D=workshop' + '&filter=' + JSON.stringify(filter),
+                headers: {
+                    'Authorization': 'Bearer {{$nToken}}',
+                    'x-app': 'aai'
+                }
+            };
+
+            axios.request(config)
+                .then((response) => {
+                    // console.log(response.data);
+                    let data = [response.data.data];
+                    let html = "";
+                    for (const item of data) {
+                        const listComponents = item.listComponents;
+                        const listComponentsHTML = listComponents.map((component, index) => {
+                            return `
+                        <tr>
+                            <td>${index + 1}</td>
+                            <td>${component.namePacking}</td>
+                            <td>${component.unit == null ? '' : component.unit?.measUnitTextVN}</td>
+                            <td>${component.qtyPacking}</td>
+                        </tr>`
+                        }).join('');
+                        html_fragile = '';
+                        if (item.fragile == true) {
+                            html_fragile = `<image src="https://lh3.googleusercontent.com/d/1TGn7CRg3wRIEyE0kndnCFDBS55bP1CH4" width='50px'/>`;
+                        } else {
+                            html_fragile = `<input type="checkbox" ${item.fragile == true ? 'checked' : ''}> Không`;
+                        }
+                        html += `
+                    <div class="container a4-page landscape" id="IdToPrint">
+                        <!-- Header -->
+                        <header class="header">
+                            <div class="logo">
+                                <img src="https://lh3.googleusercontent.com/d/1enolRj8646glKCTQwQEtzpFYjYTNKdtx" alt="Company Logo"
+                                    class="logo-image">
+                            </div>
+                            <div class="company-info">
+                                <h2>CÔNG TY CỔ PHẦN XÂY DỰNG KIẾN TRÚC AA TÂY NINH</h2>
+                                <h4>Địa chỉ: Tổ 1, ấp Bùng Binh, xã Hưng Thuận, Tây Ninh, Việt Nam</h4>
+                            </div>
+                            <div class="qr-code">
+                                <img src="${item.qrPack}" alt="QR Code" class="qr-code-image">
+                            </div>
+                        </header>
+
+                        <!-- Main Content -->
+                        <main class="content">
+                            <table>
+                                <tbody>
+                                    <tr>
+                                        <td>TÊN CÔNG TRÌNH:</td>
+                                        <td>${item.Project?.Name}_${item.Project.Ma_Tender}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>TÊN SẢN PHẨM:</td>
+                                        <td>${item.productionOrder?.Material_description}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>MÃ NHÀ MÁY:</td>
+                                        <td>${item.productionOrder?.Factory_Order} <span class="span-line">XƯỞNG: ${item.workshop?.name ? item.workshop?.name : ''}</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>SỐ LƯỢNG:</td>
+                                        <td>${item.productionOrder?.Target_Quantity} ${item.productionOrder?.Unit == null ? '' : item.productionOrder?.Unit}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>MÃ SAP TP:</td>
+                                        <td>${item.productionOrder?.ID_Material}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>MÃ SAP 98*:</td>
+                                        <td>${item.codeSap98 == null ? '' : item.codeSap98}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>MÃ KIỆN:</td>
+                                        <td><span>${item.codePack}</span><span class="pl_4">NGÀY ĐG: ${moment(item.createdAt).format('DD/MM/YYYY')}</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>SỐ KIỆN:</td>
+                                        <td>${item.qtyPack}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>GHI CHÚ:</td>
+                                        <td>${item.notePack == null ? '' : item.notePack}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>KHU VỰC:</td>
+                                        <td>${item.areaPackInstall?.fullName}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>PHỤ KIỆN:</td>
+                                        <td><input type="checkbox" ${item.checkHardware == true ? 'checked' : ''}> ${item.checkHardware == true ? 'Có' : 'Không'}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>TRỌNG LƯỢNG (KG):</td>
+                                        <td class="h1_td">${item.weight}</td>
+                                    </tr>
+                                    <!--
+                                    <tr>
+                                        <td>KÍCH THƯỚC:</td>
+                                        <td>DÀI(mm) : ${item.length == null ? '' : item.length}</td>
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                        <td>RỘNG(mm) : ${item.width == null ? '' : item.width}</td>
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                        <td>CAO(mm) : ${item.height == null ? '' : item.height}</td>
+                                    </tr>
+                                    -->
+                                    <tr>
+                                        <td>HƯỚNG ĐẶT KIỆN:</td>
+                                        <td class="td_flex_center"><span class="h1_td">${item.orderdirectionPack}</span><span class="span-line pr_4">HÀNG DỄ VỠ:</span>${html_fragile}</td>
+                                    </tr>
+                                    <!--
+                                    <tr>
+                                        <td>HÀNG DỄ VỠ:</td>
+                                        <td>${html_fragile}</td>
+                                    </tr>
+                                    -->
+                                </tbody>
+                            </table>
+                            <!-- Sidebar Image -->
+                            <aside class="sidebar">
+                                <img src="${item.imgAvatar?.preview}" alt="Product Image"
+                                    class="product-image">
+                                <table class="listComponent">
+                                    <tr>
+                                        <th>STT</th>
+                                        <th>Component</th>
+                                        <th>ĐVT</th>
+                                        <th>Số lượng</th>
+                                    </tr>
+                                    ${listComponentsHTML}
+                                </table>
+                            </aside>
+                        </main>
+                    </div>
+                `;
+                    }
+                    $("#dataToPrint").html(html);
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+
+        });
+    </script>
