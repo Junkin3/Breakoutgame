@@ -6,11 +6,12 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>In tem A4 - VN</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap&subset=latin,vietnamese" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap&subset=vietnamese" rel="stylesheet">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap&subset=vietnamese');
         body {
-            font-family: 'Roboto';
+            font-family: 'Roboto', 'Arial', 'Tahoma', sans-serif;
             margin: 20px;
             color: #000;
         }
@@ -232,6 +233,9 @@
 </body>
 
 </html>
+<script>
+    document.fonts.ready.then(() => window.print());
+</script>
 
 
 
