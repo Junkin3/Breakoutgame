@@ -129,11 +129,13 @@
             .print-btn {
                 display: none;
             }
+
             body {
                 font-family: 'Roboto', 'Arial', 'Tahoma', sans-serif;
                 margin: 0;
                 padding: 0;
             }
+
             .container {
                 padding: 10px;
             }
@@ -152,7 +154,7 @@
                 <img src="Logo AA since 1989-02.png" alt="Logo" class="logo">
             </div>
             <div class="company-info">
-                <h2>CÔNG TY CỔ PHẦN XÂY DỰNG KIẾN TRÚC AA TÂY NINH</h2>
+                <p style="font-weight: bold; font-size: 24px;">CÔNG TY CỔ PHẦN XÂY DỰNG KIẾN TRÚC AA TÂY NINH</p>
                 <p>Địa chỉ: Tổ 1, ấp Bùng Binh, xã Hưng Thuận, Tây Ninh, Việt Nam</p>
             </div>
             <div class="qr-code">
@@ -162,7 +164,7 @@
 
         <!-- Main Content -->
         <div class="main">
-            <table class="info-table">
+            <table class="info-table" style="font-weight: bold;">
                 <tr>
                     <td>TÊN CÔNG TRÌNH:</td>
                     <td>FINOLHU ISLAND RESORT (PHASE 2) - ISLAND_CT25-029</td>
@@ -239,19 +241,15 @@
 
     <script>
         $(document).ready(function () {
-            // Cách 1: In trực tiếp không cần html2canvas
             $("#btn-print").on('click', function () {
                 window.print();
             });
-
-            // Hoặc cách 2: Sử dụng html2canvas để đảm bảo chất lượng hình ảnh khi in
-            /*
             $("#btn-print").on('click', function () {
                 html2canvas(document.getElementById("print-area"), {
                     scale: 2,
                     useCORS: true,
                     backgroundColor: "#fff"
-                }).then(function(canvas) {
+                }).then(function (canvas) {
                     var printWindow = window.open('', '_blank');
                     printWindow.document.write('<html><head><title>Print</title></head><body>');
                     printWindow.document.write('<img src="' + canvas.toDataURL() + '" style="width:100%;">');
@@ -268,4 +266,3 @@
 </body>
 
 </html>
-
