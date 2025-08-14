@@ -7,9 +7,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>In tem A4 - VN</title>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Roboto&display=swap&subset=vietnamese"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap&subset=vietnamese" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         body {
             font-family: 'Roboto', 'Arial', 'Tahoma', sans-serif;
@@ -130,15 +130,22 @@
             .print-btn {
                 display: none;
             }
+            body {
+                margin: 0;
+                padding: 0;
+            }
+            .container {
+                padding: 10px;
+            }
         }
     </style>
 </head>
 
 <body>
 
-    <button class="print-btn">🖨 In tem</button>
+    <button class="print-btn" id="btn-print">🖨 In tem</button>
 
-    <div class="container">
+    <div class="container" id="print-area">
         <!-- Header -->
         <div class="header">
             <div>
@@ -229,54 +236,35 @@
             </div>
         </div>
     </div>
-<script src="https://cdn.jsdelivr.net/gh/niklasvh/html2canvas@refs/heads/master/dist/html2canvas.min.js"></script>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script>
-        document.querySelector(".print-btn").addEventListener("click", () => {
-            html2canvas(document.querySelector(".container"), {
-                scale: 2,
-                useCORS: true,
-                backgroundColor: "#fff"
-            }).then(canvas => {
-                const imgData = canvas.toDataURL("image/png");
-                const previewWindow = window.open("", "_blank");
-                previewWindow.document.write(`
-                    <html>
-                    <head>
-                        <title>Xem trước tem in</title>
-                        <style>
-                            body { font-family: Arial; text-align: center; background: #fff; margin: 0; padding: 20px; }
-                            img { max-width: 100%; height: auto; border: 1px solid #ccc; }
-                            .btn {
-                                margin-top: 20px;
-                                padding: 10px 20px;
-                                font-size: 16px;
-                                background: #007bff;
-                                color: white;
-                                border: none;
-                                border-radius: 4px;
-                                cursor: pointer;
-                            }
-                            .btn:hover { background: #0056b3; }
-                            .btn-close { background: #dc3545; margin-left: 10px; }
-                            .btn-close:hover { background: #a71d2a; }
-                        </style>
-                    </head>
-                    <body>
-                        <h2>Xem trước tem in</h2>
-                        <img src="${imgData}" />
-                        <br>
-                        <button class="btn" onclick="window.print()">🖨 In</button>
-                        <button class="btn btn-close" onclick="window.close()">❌ Đóng</button>
-                    </body>
-                    </html>
-                `);
-                previewWindow.document.close();
+        $(document).ready(function () {
+            // Cách 1: In trực tiếp không cần html2canvas
+            $("#btn-print").on('click', function () {
+                window.print();
             });
+
+            // Hoặc cách 2: Sử dụng html2canvas để đảm bảo chất lượng hình ảnh khi in
+            /*
+            $("#btn-print").on('click', function () {
+                html2canvas(document.getElementById("print-area"), {
+                    scale: 2,
+                    useCORS: true,
+                    backgroundColor: "#fff"
+                }).then(function(canvas) {
+                    var printWindow = window.open('', '_blank');
+                    printWindow.document.write('<html><head><title>Print</title></head><body>');
+                    printWindow.document.write('<img src="' + canvas.toDataURL() + '" style="width:100%;">');
+                    printWindow.document.write('</body></html>');
+                    printWindow.document.close();
+                    printWindow.focus();
+                    printWindow.print();
+                    printWindow.close();
+                });
+            });
+            */
         });
     </script>
 </body>
 
 </html>
-
