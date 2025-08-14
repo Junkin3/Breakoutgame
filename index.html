@@ -242,25 +242,27 @@
     <script>
         $(document).ready(function () {
             $("#btn-print").on('click', function () {
-                window.print();
-            });
-            $("#btn-print").on('click', function () {
+                // Sử dụng html2canvas để chuyển đổi thành hình ảnh trước khi in
                 html2canvas(document.getElementById("print-area"), {
                     scale: 2,
                     useCORS: true,
-                    backgroundColor: "#fff"
-                }).then(function (canvas) {
+                    backgroundColor: "#fff",
+                    logging: false,
+                    allowTaint: true
+                }).then(function(canvas) {
                     var printWindow = window.open('', '_blank');
-                    printWindow.document.write('<html><head><title>Print</title></head><body>');
-                    printWindow.document.write('<img src="' + canvas.toDataURL() + '" style="width:100%;">');
+                    printWindow.document.write('<html><head><title>In tem sản phẩm</title>');
+                    printWindow.document.write('<style>@page { size: A4; margin: 0; } body { margin: 0; } img { max-width: 100%; height: auto; }</style>');
+                    printWindow.document.write('</head><body>');
+                    printWindow.document.write('<img src="' + canvas.toDataURL('image/png') + '" style="display: block; margin: 0 auto;">');
+                    printWindow.document.write('<script>window.onload = function() { setTimeout(function() { window.print(); window.close(); }, 200); }<\/script>');
                     printWindow.document.write('</body></html>');
                     printWindow.document.close();
-                    printWindow.focus();
-                    printWindow.print();
-                    printWindow.close();
+                }).catch(function(error) {
+                    console.error('Error generating canvas:', error);
+                    alert('Có lỗi xảy ra khi tạo bản in. Vui lòng thử lại.');
                 });
             });
-            */
         });
     </script>
 </body>
