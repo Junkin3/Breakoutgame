@@ -18,6 +18,10 @@
             background: #fff;
             padding: 20px;
             box-sizing: border-box;
+            /* Cố định layout để đảm bảo tính nhất quán */
+            position: relative;
+            min-width: 800px;
+            /* Đảm bảo width tối thiểu */
         }
 
         /* Header */
@@ -27,47 +31,62 @@
             align-items: center;
             border-bottom: 2px solid #ccc;
             padding-bottom: 10px;
+            /* Cố định height để tránh co giãn */
+            min-height: 80px;
         }
 
         .header img.logo {
             width: 120px;
+            height: auto;
+            max-height: 80px;
+            object-fit: contain;
         }
 
         .company-info {
             text-align: center;
+            flex: 1;
+            max-width: 450px;
         }
 
         .company-info h2 {
             margin: 0;
             font-size: 20px;
+            line-height: 1.2;
         }
 
         .company-info .address {
-            margin: 0;
+            margin: 5px 0 0 0;
             font-size: 14px;
+            line-height: 1.3;
         }
 
         .qr-code img {
-            width: 150px;
-            height: auto;
+            width: 200px;
+            height: 200px;
+            object-fit: contain;
         }
 
         /* Main content */
         .main {
             display: flex;
             margin-top: 20px;
+            gap: 20px;
         }
 
         .info-table {
             width: 70%;
             border-collapse: collapse;
             font-weight: bold;
+            table-layout: fixed;
+            /* Cố định layout table */
         }
 
         .info-table td {
-            padding: 4px 8px;
+            padding: 6px 8px;
             vertical-align: top;
             font-size: 14px;
+            line-height: 1.3;
+            word-wrap: break-word;
         }
 
         .info-table td:first-child {
@@ -79,19 +98,23 @@
             width: 30%;
             text-align: center;
             padding-left: 10px;
+            min-width: 200px;
+            /* Đảm bảo width tối thiểu */
         }
 
         .product-image {
             max-width: 100%;
             height: auto;
+            max-height: 200px;
             margin-bottom: 10px;
-            border: 1px solid #ddd;
+            object-fit: contain;
         }
 
         .components-table {
             width: 100%;
             border-collapse: collapse;
             font-size: 13px;
+            table-layout: fixed;
         }
 
         .components-table th,
@@ -99,6 +122,7 @@
             border: 1px solid #000;
             padding: 4px;
             text-align: center;
+            word-wrap: break-word;
         }
 
         .components-table th {
@@ -229,6 +253,13 @@
             background: #dc3545;
             color: white;
         }
+
+        /* Style để chuẩn bị cho canvas conversion */
+        .canvas-ready {
+            transform: none !important;
+            transition: none !important;
+            animation: none !important;
+        }
     </style>
 </head>
 
@@ -243,8 +274,9 @@
         <!-- Header -->
         <div class="header">
             <div>
-                <div style="width: auto; height: auto; display: flex; align-items: center; justify-content: center;">
-                    <img src="Logo AA since 1989-02.png" alt="">
+                <div style="width: 120px; height: 80px; display: flex; align-items: center; justify-content: center;">
+                    <img src="Logo AA since 1989-02.png" alt=""
+                        style="max-width: 100%; max-height: 100%; object-fit: contain;">
                 </div>
             </div>
             <div class="company-info">
@@ -252,8 +284,9 @@
                 <p class="address">Địa chỉ: Tổ 1, ấp Bùng Binh, xã Hưng Thuận, Tây Ninh, Việt Nam</p>
             </div>
             <div class="qr-code">
-                <div style="width: auto; height: auto; display: flex; align-items: center; justify-content: center;">
-                    <img src="https://quickchart.io/qr?text=Hello%20world&size=250" alt="">
+                <div style="display: flex; align-items: center; justify-content: center;">
+                    <img src="https://quickchart.io/qr?text=Hello%20world&size=250" alt=""
+                        style="width: 100%; height: 100%; object-fit: contain;">
                 </div>
             </div>
         </div>
@@ -316,16 +349,15 @@
             </table>
 
             <div class="right-side">
-                <div
-                    style="width: auto; height: auto;display: flex; align-items: center; justify-content: center; margin-bottom: 10px; ">
-                    <img src="Screenshot 2025-07-18 220329.png" alt="">
+                <div style="width: auto; height: auto;">
+                    <img src="Screenshot 2025-07-18 220329.png" alt="" style="object-fit: contain;">
                 </div>
                 <table class="components-table">
                     <tr>
-                        <th>STT</th>
-                        <th>Component</th>
-                        <th>ĐVT</th>
-                        <th>Số lượng</th>
+                        <th style="width: 15%;">STT</th>
+                        <th style="width: 45%;">Component</th>
+                        <th style="width: 20%;">ĐVT</th>
+                        <th style="width: 20%;">Số lượng</th>
                     </tr>
                     <tr>
                         <td>1</td>
@@ -354,6 +386,20 @@
         async function convertDivToImage() {
             const printArea = document.getElementById('print-area');
 
+            // Tạm thời cố định layout để đảm bảo consistency
+            printArea.classList.add('canvas-ready');
+
+            // Đợi một chút để layout ổn định
+            await new Promise(resolve => setTimeout(resolve, 100));
+
+            // Lấy kích thước thực tế của element
+            const rect = printArea.getBoundingClientRect();
+            const computedStyle = window.getComputedStyle(printArea);
+
+            // Tính toán kích thước chính xác bao gồm padding
+            const actualWidth = rect.width;
+            const actualHeight = rect.height;
+
             // Tạm thời ẩn các element có thể gây xung đột với HTML2Canvas
             const problematicElements = printArea.querySelectorAll('input[type="checkbox"]');
             const originalStates = [];
@@ -371,31 +417,41 @@
                 el.style.display = 'none';
             });
 
-            const text = printArea.querySelectorAll('p, span, td, th, li');
-            text.forEach(e => {
-                e.style.fontSize = '20px'
-            })
-
             try {
                 const canvas = await html2canvas(printArea, {
-                    scale: 2,
+                    scale: 2, // Tăng độ phân giải
                     useCORS: true,
                     allowTaint: false,
                     backgroundColor: '#ffffff',
-                    width: printArea.offsetWidth,
-                    height: printArea.offsetHeight,
+                    width: actualWidth, // Sử dụng kích thước thực tế
+                    height: actualHeight, // Sử dụng kích thước thực tế
+                    x: 0,
+                    y: 0,
                     scrollX: 0,
                     scrollY: 0,
+                    windowWidth: window.innerWidth,
+                    windowHeight: window.innerHeight,
                     ignoreElements: (element) => {
                         // Bỏ qua các element có thể gây lỗi
                         return element.tagName === 'INPUT' ||
                             element.classList.contains('ignore-capture');
                     },
                     onclone: (clonedDoc) => {
+                        // Đảm bảo layout consistency trong cloned document
+                        const clonedPrintArea = clonedDoc.getElementById('print-area');
+                        if (clonedPrintArea) {
+                            // Cố định kích thước để tránh layout shift
+                            clonedPrintArea.style.width = actualWidth + 'px';
+                            clonedPrintArea.style.minWidth = actualWidth + 'px';
+                            clonedPrintArea.style.maxWidth = actualWidth + 'px';
+                            clonedPrintArea.style.position = 'relative';
+                            clonedPrintArea.style.transform = 'none';
+                            clonedPrintArea.style.zoom = '1';
+                        }
+
                         // Đảm bảo không có color function không được hỗ trợ
                         const allElements = clonedDoc.querySelectorAll('*');
                         allElements.forEach(el => {
-                            const computedStyle = window.getComputedStyle(el);
                             // Reset các style có thể gây lỗi về basic values
                             el.style.accentColor = '';
                             if (el.style.color && (el.style.color.includes('oklch') || el.style.color.includes('lab'))) {
@@ -404,31 +460,27 @@
                             if (el.style.backgroundColor && (el.style.backgroundColor.includes('oklch') || el.style.backgroundColor.includes('lab'))) {
                                 el.style.backgroundColor = '#ffffff';
                             }
-                        });
-                    }
-                });
 
-                // Khôi phục lại checkbox
-                problematicElements.forEach((el, index) => {
-                    el.style.display = '';
-                    const replacement = printArea.querySelector('.checkbox-replacement');
-                    if (replacement) {
-                        replacement.remove();
+                            // Đảm bảo font được load
+                            if (el.style.fontFamily) {
+                                el.style.fontFamily = 'Arial, Tahoma, sans-serif';
+                            }
+                        });
                     }
                 });
 
                 return canvas;
             } catch (error) {
-                // Khôi phục lại checkbox nếu có lỗi
-                problematicElements.forEach((el, index) => {
-                    el.style.display = '';
-                    const replacement = printArea.querySelector('.checkbox-replacement');
-                    if (replacement) {
-                        replacement.remove();
-                    }
-                });
                 console.error('Lỗi khi convert div to canvas:', error);
                 throw error;
+            } finally {
+                // Khôi phục lại checkbox và class
+                printArea.classList.remove('canvas-ready');
+                problematicElements.forEach((el, index) => {
+                    el.style.display = '';
+                });
+                const replacements = printArea.querySelectorAll('.checkbox-replacement');
+                replacements.forEach(replacement => replacement.remove());
             }
         }
 
@@ -442,10 +494,13 @@
                 const canvas = await convertDivToImage();
                 const link = document.createElement('a');
                 link.download = 'AA-label-' + new Date().toISOString().slice(0, 10) + '.png';
-                link.href = canvas.toDataURL('image/png');
+                link.href = canvas.toDataURL('image/png', 0.95); // Giảm một chút quality để file nhẹ hơn
                 link.click();
 
-                button.textContent = originalText;
+                button.textContent = '✓ Đã tải!';
+                setTimeout(() => {
+                    button.textContent = originalText;
+                }, 2000);
                 button.disabled = false;
             } catch (error) {
                 console.error('Error generating image:', error);
@@ -524,6 +579,19 @@
             }
         `;
         document.head.appendChild(style);
+
+        // Đảm bảo layout stable khi window resize
+        let resizeTimeout;
+        window.addEventListener('resize', function () {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(function () {
+                // Force layout recalculation
+                const printArea = document.getElementById('print-area');
+                printArea.style.display = 'none';
+                printArea.offsetHeight; // Trigger reflow
+                printArea.style.display = 'block';
+            }, 250);
+        });
     </script>
 </body>
 
