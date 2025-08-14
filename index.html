@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap&subset=vietnamese" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         body {
             font-family: 'Roboto', 'Arial', 'Tahoma', sans-serif;
@@ -240,79 +240,29 @@
     </div>
 
     <script>
-       $(document).ready(function () {
-    $("#btn-print").on('click', function () {
-        // Tạm thời thay thế các giá trị oklch() trước khi chụp
-        const originalStyles = replaceOklchColors();
-        
-        html2canvas(document.getElementById("print-area"), {
-            scale: 2,
-            useCORS: true,
-            backgroundColor: "#fff",
-            logging: true,
-            allowTaint: true
-        }).then(function(canvas) {
-            // Khôi phục lại các giá trị màu gốc
-            restoreOriginalColors(originalStyles);
-            
-            var printWindow = window.open('', '_blank');
-            printWindow.document.write('<html><head><title>In tem sản phẩm</title>');
-            printWindow.document.write('<style>@page { size: A4; margin: 0; } body { margin: 0; } img { max-width: 100%; height: auto; }</style>');
-            printWindow.document.write('</head><body>');
-            printWindow.document.write('<img src="' + canvas.toDataURL('image/png') + '" style="display: block; margin: 0 auto;">');
-            printWindow.document.write('<script>setTimeout(function() { window.print(); window.close(); }, 500);<\/script>');
-            printWindow.document.write('</body></html>');
-            printWindow.document.close();
-        }).catch(function(error) {
-            console.error('Error generating canvas:', error);
-            alert('Lỗi khi tạo bản in: ' + error.message);
-        });
-    });
-
-    // Hàm thay thế tất cả oklch() trong CSS
-    function replaceOklchColors() {
-        const elements = document.querySelectorAll('*');
-        const originalStyles = [];
-        
-        elements.forEach(el => {
-            const computedStyle = getComputedStyle(el);
-            const styleProps = ['color', 'background-color', 'border-color', 'box-shadow', 'text-shadow'];
-            
-            styleProps.forEach(prop => {
-                const value = computedStyle.getPropertyValue(prop);
-                if (value.includes('oklch')) {
-                    originalStyles.push({
-                        element: el,
-                        property: prop,
-                        value: el.style[prop]
-                    });
-                    
-                    // Thay thế bằng màu dự phòng
-                    if (prop === 'color') {
-                        el.style[prop] = '#000000'; // Màu đen
-                    } else if (prop === 'background-color') {
-                        el.style[prop] = '#ffffff'; // Màu trắng
-                    } else {
-                        el.style[prop] = 'none';
-                    }
-                }
+        $(document).ready(function () {
+            $("#btn-print").on('click', function () {
+                window.print();
             });
+            $("#btn-print").on('click', function () {
+                html2canvas(document.getElementById("print-area"), {
+                    scale: 2,
+                    useCORS: true,
+                    backgroundColor: "#fff"
+                }).then(function (canvas) {
+                    var printWindow = window.open('', '_blank');
+                    printWindow.document.write('<html><head><title>Print</title></head><body>');
+                    printWindow.document.write('<img src="' + canvas.toDataURL() + '" style="width:100%;">');
+                    printWindow.document.write('</body></html>');
+                    printWindow.document.close();
+                    printWindow.focus();
+                    printWindow.print();
+                    printWindow.close();
+                });
+            });
+            */
         });
-        
-        return originalStyles;
-    }
-    
-    // Hàm khôi phục màu gốc
-    function restoreOriginalColors(originalStyles) {
-        originalStyles.forEach(style => {
-            if (style.element && style.property) {
-                style.element.style[style.property] = style.value;
-            }
-        });
-    }
-});
     </script>
 </body>
 
 </html>
-
