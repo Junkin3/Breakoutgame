@@ -7,9 +7,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>In tem A4 - VN</title>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap&subset=vietnamese" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Roboto&display=swap&subset=vietnamese"
+        rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap&subset=vietnamese');
         body {
             font-family: 'Roboto', 'Arial', 'Tahoma', sans-serif;
             margin: 20px;
@@ -125,7 +126,6 @@
             background: #0056b3;
         }
 
-        /* Hide print button when printing */
         @media print {
             .print-btn {
                 display: none;
@@ -136,7 +136,7 @@
 
 <body>
 
-    <button class="print-btn" onclick="window.print()">🖨 In tem</button>
+    <button class="print-btn">🖨 In tem</button>
 
     <div class="container">
         <!-- Header -->
@@ -230,43 +230,51 @@
         </div>
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script>
+        document.querySelector(".print-btn").addEventListener("click", () => {
+            html2canvas(document.querySelector(".container"), {
+                scale: 2,
+                useCORS: true,
+                backgroundColor: "#fff"
+            }).then(canvas => {
+                const imgData = canvas.toDataURL("image/png");
+                const previewWindow = window.open("", "_blank");
+                previewWindow.document.write(`
+                    <html>
+                    <head>
+                        <title>Xem trước tem in</title>
+                        <style>
+                            body { font-family: Arial; text-align: center; background: #fff; margin: 0; padding: 20px; }
+                            img { max-width: 100%; height: auto; border: 1px solid #ccc; }
+                            .btn {
+                                margin-top: 20px;
+                                padding: 10px 20px;
+                                font-size: 16px;
+                                background: #007bff;
+                                color: white;
+                                border: none;
+                                border-radius: 4px;
+                                cursor: pointer;
+                            }
+                            .btn:hover { background: #0056b3; }
+                            .btn-close { background: #dc3545; margin-left: 10px; }
+                            .btn-close:hover { background: #a71d2a; }
+                        </style>
+                    </head>
+                    <body>
+                        <h2>Xem trước tem in</h2>
+                        <img src="${imgData}" />
+                        <br>
+                        <button class="btn" onclick="window.print()">🖨 In</button>
+                        <button class="btn btn-close" onclick="window.close()">❌ Đóng</button>
+                    </body>
+                    </html>
+                `);
+                previewWindow.document.close();
+            });
+        });
+    </script>
 </body>
 
 </html>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<script>
-document.querySelector(".print-btn").addEventListener("click", () => {
-    html2canvas(document.querySelector(".container"), {
-        scale: 2,
-        useCORS: true,
-        backgroundColor: "#fff"
-    }).then(canvas => {
-        const imgData = canvas.toDataURL("image/png");
-        const printWindow = window.open("");
-        printWindow.document.write(`
-            <html>
-            <head>
-                <title>Print</title>
-                <style>
-                    body { margin: 0; padding: 0; text-align: center; background: #fff; }
-                    img { max-width: 100%; }
-                </style>
-            </head>
-            <body>
-                <img src="${imgData}">
-            </body>
-            </html>
-        `);
-        printWindow.document.close();
-        printWindow.focus();
-        printWindow.print();
-        printWindow.close();
-    });
-});
-</script>
-
-
-
-
-
-
