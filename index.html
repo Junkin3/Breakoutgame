@@ -6,11 +6,9 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>In tem A4 - VN</title>
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap&subset=vietnamese" rel="stylesheet">
     <style>
         body {
-            font-family: 'Roboto', 'Arial', 'Tahoma', sans-serif;
+            font-family: Arial, Tahoma, sans-serif;
             margin: 20px;
             color: #000;
         }
@@ -25,7 +23,7 @@
         /* Header */
         .header {
             display: flex;
-            justify-content: space-between;
+            justify-content: space-around;
             align-items: center;
             border-bottom: 2px solid #ccc;
             padding-bottom: 10px;
@@ -37,10 +35,9 @@
 
         .company-info {
             text-align: center;
-            flex: 1;
         }
 
-        .company-info .name {
+        .company-info h2 {
             margin: 0;
             font-size: 20px;
         }
@@ -64,6 +61,7 @@
         .info-table {
             width: 70%;
             border-collapse: collapse;
+            font-weight: bold;
         }
 
         .info-table td {
@@ -117,14 +115,60 @@
             cursor: pointer;
             font-size: 14px;
             border-radius: 4px;
+            margin-right: 10px;
+        }
+
+        .download-btn {
+            margin-bottom: 15px;
+            padding: 8px 16px;
+            background: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+
+        .print-image-btn {
+            margin-bottom: 15px;
+            padding: 8px 16px;
+            background: #6c757d;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            border-radius: 4px;
         }
 
         .print-btn:hover {
             background: #0056b3;
         }
 
+        .download-btn:hover {
+            background: #218838;
+        }
+
+        .print-image-btn:hover {
+            background: #5a6268;
+        }
+
+        /* Đảm bảo không có modern CSS colors có thể gây lỗi HTML2Canvas */
+        * {
+            accent-color: auto !important;
+        }
+
+        /* Override system colors */
+        input[type="checkbox"] {
+            accent-color: #007bff !important;
+            color-scheme: light !important;
+        }
+
         @media print {
-            .print-btn {
+
+            .print-btn,
+            .download-btn,
+            .print-image-btn {
                 display: none;
             }
 
@@ -137,24 +181,80 @@
                 padding: 10px;
             }
         }
+
+        /* Print preview style */
+        #printPreviewContainer {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: white;
+            z-index: 1000;
+            overflow: auto;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        #printPreviewImage {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .preview-controls {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .preview-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .print-preview-btn {
+            background: #007bff;
+            color: white;
+        }
+
+        .close-preview-btn {
+            background: #dc3545;
+            color: white;
+        }
     </style>
 </head>
 
 <body>
-    <button class="print-btn" onclick="window.print()">🖨 In tem</button>
+    <div>
+        <button class="print-btn" onclick="window.print()">🖨 In tem</button>
+        <button class="download-btn" onclick="downloadAsImage()">📥 Tải ảnh</button>
+        <button class="print-image-btn" onclick="showPrintPreview()">🖨 In từ ảnh</button>
+    </div>
 
-    <div class="container">
+    <div class="container" id="print-area">
         <!-- Header -->
         <div class="header">
             <div>
-                <img src="Logo AA since 1989-02.png" alt="Logo" class="logo">
+                <div style="width: auto; height: auto; display: flex; align-items: center; justify-content: center;">
+                    <img src="Logo AA since 1989-02.png" alt="">
+                </div>
             </div>
             <div class="company-info">
-                <p class="name">CÔNG TY CỔ PHẦN XÂY DỰNG KIẾN TRÚC AA TÂY NINH</p>
+                <h2 class="name">CÔNG TY CỔ PHẦN XÂY DỰNG KIẾN TRÚC AA TÂY NINH</h2>
                 <p class="address">Địa chỉ: Tổ 1, ấp Bùng Binh, xã Hưng Thuận, Tây Ninh, Việt Nam</p>
             </div>
             <div class="qr-code">
-                <img src="https://quickchart.io/qr?text=Hello world&size=150" alt="QR Code">
+                <div style="width: auto; height: auto; display: flex; align-items: center; justify-content: center;">
+                    <img src="https://quickchart.io/qr?text=Hello%20world&size=250" alt="">
+                </div>
             </div>
         </div>
 
@@ -216,13 +316,16 @@
             </table>
 
             <div class="right-side">
-                <img src="Logo AA since 1989-02.png" alt="Sản phẩm" class="product-image">
+                <div
+                    style="width: auto; height: auto;display: flex; align-items: center; justify-content: center; margin-bottom: 10px; ">
+                    <img src="Screenshot 2025-07-18 220329.png" alt="">
+                </div>
                 <table class="components-table">
                     <tr>
-                        <td>STT</td>
-                        <td>Component</td>
-                        <td>ĐVT</td>
-                        <td>Số lượng</td>
+                        <th>STT</th>
+                        <th>Component</th>
+                        <th>ĐVT</th>
+                        <th>Số lượng</th>
                     </tr>
                     <tr>
                         <td>1</td>
@@ -234,6 +337,194 @@
             </div>
         </div>
     </div>
+
+    <!-- Print preview container -->
+    <div id="printPreviewContainer">
+        <img id="printPreviewImage">
+        <div class="preview-controls">
+            <button class="preview-btn print-preview-btn" onclick="printPreviewImage()">In</button>
+            <button class="preview-btn close-preview-btn" onclick="closePrintPreview()">Đóng</button>
+        </div>
+    </div>
+
+    <!-- HTML2Canvas CDN - sử dụng phiên bản ổn định hơn -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.3.2/html2canvas.min.js"></script>
+
+    <script>
+        async function convertDivToImage() {
+            const printArea = document.getElementById('print-area');
+
+            // Tạm thời ẩn các element có thể gây xung đột với HTML2Canvas
+            const problematicElements = printArea.querySelectorAll('input[type="checkbox"]');
+            const originalStates = [];
+
+            // Thay thế checkbox bằng text
+            problematicElements.forEach((el, index) => {
+                const isChecked = el.checked;
+                originalStates[index] = { element: el, checked: isChecked };
+
+                const replacement = document.createElement('span');
+                replacement.textContent = isChecked ? '☑' : '☐';
+                replacement.style.fontSize = '14px';
+                replacement.className = 'checkbox-replacement';
+                el.parentNode.insertBefore(replacement, el);
+                el.style.display = 'none';
+            });
+
+            const text = printArea.querySelectorAll('p, span, td, th, li');
+            text.forEach(e => {
+                e.style.fontSize = '20px'
+            })
+
+            try {
+                const canvas = await html2canvas(printArea, {
+                    scale: 2,
+                    useCORS: true,
+                    allowTaint: false,
+                    backgroundColor: '#ffffff',
+                    width: printArea.offsetWidth,
+                    height: printArea.offsetHeight,
+                    scrollX: 0,
+                    scrollY: 0,
+                    ignoreElements: (element) => {
+                        // Bỏ qua các element có thể gây lỗi
+                        return element.tagName === 'INPUT' ||
+                            element.classList.contains('ignore-capture');
+                    },
+                    onclone: (clonedDoc) => {
+                        // Đảm bảo không có color function không được hỗ trợ
+                        const allElements = clonedDoc.querySelectorAll('*');
+                        allElements.forEach(el => {
+                            const computedStyle = window.getComputedStyle(el);
+                            // Reset các style có thể gây lỗi về basic values
+                            el.style.accentColor = '';
+                            if (el.style.color && (el.style.color.includes('oklch') || el.style.color.includes('lab'))) {
+                                el.style.color = '#000000';
+                            }
+                            if (el.style.backgroundColor && (el.style.backgroundColor.includes('oklch') || el.style.backgroundColor.includes('lab'))) {
+                                el.style.backgroundColor = '#ffffff';
+                            }
+                        });
+                    }
+                });
+
+                // Khôi phục lại checkbox
+                problematicElements.forEach((el, index) => {
+                    el.style.display = '';
+                    const replacement = printArea.querySelector('.checkbox-replacement');
+                    if (replacement) {
+                        replacement.remove();
+                    }
+                });
+
+                return canvas;
+            } catch (error) {
+                // Khôi phục lại checkbox nếu có lỗi
+                problematicElements.forEach((el, index) => {
+                    el.style.display = '';
+                    const replacement = printArea.querySelector('.checkbox-replacement');
+                    if (replacement) {
+                        replacement.remove();
+                    }
+                });
+                console.error('Lỗi khi convert div to canvas:', error);
+                throw error;
+            }
+        }
+
+        async function downloadAsImage() {
+            const button = document.querySelector('.download-btn');
+            const originalText = button.textContent;
+            button.textContent = 'Đang tạo ảnh...';
+            button.disabled = true;
+
+            try {
+                const canvas = await convertDivToImage();
+                const link = document.createElement('a');
+                link.download = 'AA-label-' + new Date().toISOString().slice(0, 10) + '.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+
+                button.textContent = originalText;
+                button.disabled = false;
+            } catch (error) {
+                console.error('Error generating image:', error);
+                alert('Có lỗi khi tạo ảnh. Vui lòng thử lại.');
+                button.textContent = originalText;
+                button.disabled = false;
+            }
+        }
+
+        async function showPrintPreview() {
+            const button = document.querySelector('.print-image-btn');
+            const originalText = button.textContent;
+            button.textContent = 'Đang tạo ảnh...';
+            button.disabled = true;
+
+            try {
+                const canvas = await convertDivToImage();
+                const previewContainer = document.getElementById('printPreviewContainer');
+                const previewImage = document.getElementById('printPreviewImage');
+
+                previewImage.src = canvas.toDataURL('image/png');
+                previewContainer.style.display = 'block';
+
+                button.textContent = originalText;
+                button.disabled = false;
+            } catch (error) {
+                console.error('Error generating preview:', error);
+                alert('Có lỗi khi tạo ảnh xem trước. Vui lòng thử lại.');
+                button.textContent = originalText;
+                button.disabled = false;
+            }
+        }
+
+        function closePrintPreview() {
+            document.getElementById('printPreviewContainer').style.display = 'none';
+        }
+
+        function printPreviewImage() {
+            const previewContainer = document.getElementById('printPreviewContainer');
+            previewContainer.classList.add('printing');
+            window.print();
+            previewContainer.classList.remove('printing');
+        }
+
+        // Add print styles for image preview
+        const style = document.createElement('style');
+        style.textContent = `
+            @media print {
+                body > * {
+                    display: none;
+                }
+                #printPreviewContainer {
+                    display: block !important;
+                    position: static;
+                    padding: 0;
+                    margin: 0;
+                    width: 100%;
+                    height: 100%;
+                }
+                .preview-controls {
+                    display: none !important;
+                }
+                #printPreviewImage {
+                    max-width: 100% !important;
+                    max-height: 100% !important;
+                    width: auto !important;
+                    height: auto !important;
+                    display: block !important;
+                    margin: 0 auto !important;
+                    page-break-inside: avoid;
+                }
+                @page {
+                    size: A4 landscape;
+                    margin: 10mm;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
 </body>
 
 </html>
