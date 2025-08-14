@@ -8,8 +8,6 @@
     <title>In tem A4 - VN</title>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap&subset=vietnamese" rel="stylesheet">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         body {
             font-family: 'Roboto', 'Arial', 'Tahoma', sans-serif;
@@ -47,7 +45,7 @@
             font-size: 20px;
         }
 
-        .company-info .address{
+        .company-info .address {
             margin: 0;
             font-size: 14px;
         }
@@ -129,10 +127,12 @@
             .print-btn {
                 display: none;
             }
+
             body {
                 margin: 0;
                 padding: 0;
             }
+
             .container {
                 padding: 10px;
             }
@@ -141,10 +141,9 @@
 </head>
 
 <body>
+    <button class="print-btn" onclick="window.print()">🖨 In tem</button>
 
-    <button class="print-btn" id="btn-print">🖨 In tem</button>
-
-    <div class="container" id="print-area">
+    <div class="container">
         <!-- Header -->
         <div class="header">
             <div>
@@ -235,54 +234,6 @@
             </div>
         </div>
     </div>
-
-    <script>
-        $(document).ready(function () {
-            $("#btn-print").on('click', function () {
-                // Tạo canvas từ nội dung cần in
-                html2canvas(document.getElementById("print-area"), {
-                    scale: 2, // Tăng độ phân giải
-                    logging: true,
-                    useCORS: true, // Cho phép tải hình ảnh từ các nguồn khác
-                    allowTaint: true,
-                    backgroundColor: "#FFFFFF"
-                }).then(function(canvas) {
-                    // Tạo cửa sổ in mới
-                    var printWindow = window.open('', '_blank');
-                    
-                    // Tạo nội dung HTML cho cửa sổ in
-                    printWindow.document.write('<html><head><title>In tem sản phẩm</title>');
-                    printWindow.document.write('<style>');
-                    printWindow.document.write('@page { size: A4; margin: 0; }');
-                    printWindow.document.write('body { margin: 0; padding: 0; text-align: center; }');
-                    printWindow.document.write('img { max-width: 100%; height: auto; display: block; margin: 0 auto; }');
-                    printWindow.document.write('</style>');
-                    printWindow.document.write('</head><body>');
-                    
-                    // Thêm hình ảnh đã chuyển đổi vào cửa sổ in
-                    printWindow.document.write('<img src="' + canvas.toDataURL('image/png') + '">');
-                    
-                    // Tự động in và đóng cửa sổ sau khi tải xong
-                    printWindow.document.write('<script>');
-                    printWindow.document.write('window.onload = function() {');
-                    printWindow.document.write('  setTimeout(function() {');
-                    printWindow.document.write('    window.print();');
-                    printWindow.document.write('    window.close();');
-                    printWindow.document.write('  }, 500);');
-                    printWindow.document.write('};');
-                    printWindow.document.write('<\/script>');
-                    
-                    printWindow.document.write('</body></html>');
-                    printWindow.document.close();
-                }).catch(function(error) {
-                    console.error('Lỗi khi tạo canvas:', error);
-                    alert('Có lỗi xảy ra khi tạo bản in: ' + error.message);
-                });
-            });
-        });
-    </script>
 </body>
 
 </html>
-
-
