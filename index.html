@@ -129,13 +129,10 @@
             .print-btn {
                 display: none;
             }
-
             body {
-                font-family: 'Roboto', 'Arial', 'Tahoma', sans-serif;
                 margin: 0;
                 padding: 0;
             }
-
             .container {
                 padding: 10px;
             }
@@ -242,22 +239,44 @@
     <script>
         $(document).ready(function () {
             $("#btn-print").on('click', function () {
-                window.print();
-            });
-            $("#btn-print").on('click', function () {
+                // Tạo canvas từ nội dung cần in
                 html2canvas(document.getElementById("print-area"), {
-                    scale: 2,
-                    useCORS: true,
-                    backgroundColor: "#fff"
-                }).then(function (canvas) {
+                    scale: 2, // Tăng độ phân giải
+                    logging: true,
+                    useCORS: true, // Cho phép tải hình ảnh từ các nguồn khác
+                    allowTaint: true,
+                    backgroundColor: "#FFFFFF"
+                }).then(function(canvas) {
+                    // Tạo cửa sổ in mới
                     var printWindow = window.open('', '_blank');
-                    printWindow.document.write('<html><head><title>Print</title></head><body>');
-                    printWindow.document.write('<img src="' + canvas.toDataURL() + '" style="width:100%;">');
+                    
+                    // Tạo nội dung HTML cho cửa sổ in
+                    printWindow.document.write('<html><head><title>In tem sản phẩm</title>');
+                    printWindow.document.write('<style>');
+                    printWindow.document.write('@page { size: A4; margin: 0; }');
+                    printWindow.document.write('body { margin: 0; padding: 0; text-align: center; }');
+                    printWindow.document.write('img { max-width: 100%; height: auto; display: block; margin: 0 auto; }');
+                    printWindow.document.write('</style>');
+                    printWindow.document.write('</head><body>');
+                    
+                    // Thêm hình ảnh đã chuyển đổi vào cửa sổ in
+                    printWindow.document.write('<img src="' + canvas.toDataURL('image/png') + '">');
+                    
+                    // Tự động in và đóng cửa sổ sau khi tải xong
+                    printWindow.document.write('<script>');
+                    printWindow.document.write('window.onload = function() {');
+                    printWindow.document.write('  setTimeout(function() {');
+                    printWindow.document.write('    window.print();');
+                    printWindow.document.write('    window.close();');
+                    printWindow.document.write('  }, 500);');
+                    printWindow.document.write('};');
+                    printWindow.document.write('<\/script>');
+                    
                     printWindow.document.write('</body></html>');
                     printWindow.document.close();
-                    printWindow.focus();
-                    printWindow.print();
-                    printWindow.close();
+                }).catch(function(error) {
+                    console.error('Lỗi khi tạo canvas:', error);
+                    alert('Có lỗi xảy ra khi tạo bản in: ' + error.message);
                 });
             });
         });
@@ -265,4 +284,3 @@
 </body>
 
 </html>
-
