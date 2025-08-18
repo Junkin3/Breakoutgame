@@ -244,21 +244,33 @@
                 filename: 'tem_a4.pdf',
                 image: { type: 'jpeg', quality: 0.98 },
                 html2canvas: { scale: 2, useCORS: true, backgroundColor: '#fff' },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
+                jsPDF: { unit: 'mm', format: [210, 297], orientation: 'landscape' } // A4 landscape
             };
 
             html2pdf().set(opt).from(element).toPdf().get('pdf').then(function (pdf) {
-                // Xuất thành blob để mở print dialog
-                const blob = pdf.output('bloburl');
+                // Xuất PDF thành blob
+                const blob = pdf.output('blob');
+                const blobUrl = URL.createObjectURL(new Blob([blob], { type: 'application/pdf' }));
+
+                // 1. Tự động tải về
+                const a = document.createElement('a');
+                a.href = blobUrl;
+                a.download = 'tem_a4.pdf';
+                a.click();
+
+                // 2. Thử mở in ngay (PC sẽ chạy, mobile thường bị chặn)
                 const iframe = document.createElement('iframe');
                 iframe.style.display = 'none';
-                iframe.src = blob;
+                iframe.src = blobUrl;
                 document.body.appendChild(iframe);
-                iframe.contentWindow.focus();
-                iframe.contentWindow.print();
+                iframe.onload = () => {
+                    iframe.contentWindow.focus();
+                    iframe.contentWindow.print();
+                };
             });
         });
     </script>
+
 </body>
 
 </html>
