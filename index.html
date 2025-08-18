@@ -3,7 +3,6 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>In tem A4 - VN</title>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -15,7 +14,6 @@
             color: #000;
         }
 
-        /* Fix lỗi oklch bằng cách override màu thành hex */
         .container,
         .container * {
             color: #000 !important;
@@ -24,7 +22,6 @@
 
         .container {
             width: 100%;
-            background: #fff;
             padding: 20px;
             box-sizing: border-box;
         }
@@ -43,8 +40,8 @@
         }
 
         .company-info {
-            text-align: center;
             flex: 1;
+            text-align: center;
         }
 
         .company-info h2 {
@@ -120,11 +117,11 @@
             margin-bottom: 15px;
             padding: 8px 16px;
             background: #007bff;
-            color: white;
+            color: #fff;
             border: none;
+            border-radius: 4px;
             cursor: pointer;
             font-size: 14px;
-            border-radius: 4px;
         }
 
         .print-btn:hover {
@@ -140,15 +137,12 @@
 </head>
 
 <body>
-
     <button class="print-btn">🖨 In tem</button>
 
     <div class="container">
         <!-- Header -->
         <div class="header">
-            <div>
-                <img src="Logo AA since 1989-02.png" alt="Logo" class="logo">
-            </div>
+            <img src="Logo AA since 1989-02.png" alt="Logo" class="logo">
             <div class="company-info">
                 <h2>CÔNG TY CỔ PHẦN XÂY DỰNG KIẾN TRÚC AA TÂY NINH</h2>
                 <p>Địa chỉ: Tổ 1, ấp Bùng Binh, xã Hưng Thuận, Tây Ninh, Việt Nam</p>
@@ -234,7 +228,8 @@
             </div>
         </div>
     </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script>
         document.querySelector(".print-btn").addEventListener("click", () => {
             const element = document.querySelector(".container");
@@ -244,29 +239,25 @@
                 filename: 'tem_a4.pdf',
                 image: { type: 'jpeg', quality: 0.98 },
                 html2canvas: { scale: 2, useCORS: true, backgroundColor: '#fff' },
-                jsPDF: { unit: 'mm', format: [210, 297], orientation: 'landscape' } // A4 landscape
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
             };
 
             html2pdf().set(opt).from(element).toPdf().get('pdf').then(function (pdf) {
-                // Xuất PDF thành blob
                 const blob = pdf.output('blob');
-                const blobUrl = URL.createObjectURL(new Blob([blob], { type: 'application/pdf' }));
+                const blobUrl = URL.createObjectURL(blob);
 
-                // 1. Tự động tải về
-                const a = document.createElement('a');
-                a.href = blobUrl;
-                a.download = 'tem_a4.pdf';
-                a.click();
-
-                // 2. Thử mở in ngay (PC sẽ chạy, mobile thường bị chặn)
-                const iframe = document.createElement('iframe');
-                iframe.style.display = 'none';
-                iframe.src = blobUrl;
-                document.body.appendChild(iframe);
-                iframe.onload = () => {
-                    iframe.contentWindow.focus();
-                    iframe.contentWindow.print();
-                };
+                if (/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent)) {
+                    window.open(blobUrl, '_blank');
+                } else {
+                    const iframe = document.createElement('iframe');
+                    iframe.style.display = 'none';
+                    iframe.src = blobUrl;
+                    document.body.appendChild(iframe);
+                    iframe.onload = () => {
+                        iframe.contentWindow.focus();
+                        iframe.contentWindow.print();
+                    };
+                }
             });
         });
     </script>
